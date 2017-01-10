@@ -1,0 +1,132 @@
+<!DOCTYPE html><html><!-- Built with spec-md --><head><meta charset="utf-8"><title>JSONPullParser</title><link href="spec.css" rel="stylesheet"><link href="highlight.css" rel="stylesheet"></head><body><header><h1>JSONPullParser</h1><section id="intro"><p><strong>Introduction</strong></p><p><code>JSONPullParser</code> is a dropin replacement for <code>JSON.parse</code> and also provides a pull based api.</p><p><strong>Usage</strong></p><pre><code><span class="hljs-keyword">let</span> parser  = <span class="hljs-keyword">new</span> JSONPullParser(json);
+<span class="hljs-keyword">let</span> builder = <span class="hljs-keyword">new</span> JSONPullParser.ObjectBuilder();
+
+<span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> token <span class="hljs-keyword">of</span> parser) builder.handle(token);
+</code></pre><p>Se live <a href="demo.html">demo</a>!</p></section><div class="spec-toc"><div class="title">Contents</div><ol><li><a href="#sec-Getting-started"><span class="spec-secid">1</span>Getting started</a><input hidden class="toggle" type="checkbox" checked id="_toggle_1" /><label for="_toggle_1"></label><ol><li><a href="#sec-ObjectBuilder"><span class="spec-secid">1.1</span>ObjectBuilder</a></li><li><a href="#sec-Custom-handling-of-events"><span class="spec-secid">1.2</span>Custom handling of events</a></li></ol></li><li><a href="#sec-Conformance"><span class="spec-secid">2</span>Conformance</a></li><li><a href="#sec-Results"><span class="spec-secid">3</span>Results</a></li></ol></div></header><section id="sec-Getting-started" secid="1"><h2><span class="spec-secid" title="link to this section"><a href="#sec-Getting-started">1</a></span>Getting started</h2><p><code>JSONPullParser</code> provides a simple API for iterating over the tokens in <a href="http://www.json.org/">JSON</a> data.</p><p>If your <em>JavaScript</em> engine supports <a href="https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Iteration_protocols">Symbol.iterator</a> then your parser is <em>iterable</em>.</p><pre><code><span class="hljs-keyword">let</span> parser  = <span class="hljs-keyword">new</span> JSONPullParser(json);
+
+<span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> token <span class="hljs-keyword">of</span> parser) {
+  <span class="hljs-comment">// use token</span>
+}
+</code></pre><p>Otherwise you have to get an <em>iterator</em> from <code>parser.tokens()</code></p><pre><code><span class="hljs-keyword">var</span> parser = <span class="hljs-keyword">new</span> JSONPullParser(json);
+<span class="hljs-keyword">var</span> it     = parser.tokens();
+
+<span class="hljs-keyword">while</span> (<span class="hljs-literal">true</span>) {
+  <span class="hljs-keyword">var</span> step = it.next();
+  <span class="hljs-keyword">if</span> (step.done) <span class="hljs-keyword">break</span>;
+  <span class="hljs-keyword">var</span> token = step.value;
+  <span class="hljs-comment">// use token</span>
+}
+</code></pre><p><code>JSONPullParser</code> ensures that the tokens are valid and delivered in a valid sequence. <code>StartObject</code> and <code>StartArray</code> will always have a matching <code>EndObject</code> and <code>EndArray</code> at the correct depth.</p><section id="sec-ObjectBuilder" secid="1.1"><h3><span class="spec-secid" title="link to this section"><a href="#sec-ObjectBuilder">1.1</a></span>ObjectBuilder</h3><p><code>ObjectBuilder</code> builds the resulting <em>JavaScript</em> object from the <em>tokens</em>. Its <code>value</code> property is either undefined or a valid object/array/boolean or null.</p><p><code>JSON.parse</code> could be implemented by simply feeding all the tokens to <code>ObjectBuilder</code>.</p><pre><code><span class="hljs-built_in">JSON</span>.parse = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">source</span>)
+</span>{
+  <span class="hljs-keyword">let</span> parser = <span class="hljs-keyword">new</span> JSONPullParser(source);
+  <span class="hljs-keyword">let</span> builder = <span class="hljs-keyword">new</span> JSONPullParser.ObjectBuilder();
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> token <span class="hljs-keyword">of</span> parser) builder.handle(token);
+  <span class="hljs-keyword">return</span> builder.value;
+}
+</code></pre></section><section id="sec-Custom-handling-of-events" secid="1.2"><h3><span class="spec-secid" title="link to this section"><a href="#sec-Custom-handling-of-events">1.2</a></span>Custom handling of events</h3><pre><code><span class="hljs-keyword">let</span> parser = <span class="hljs-keyword">new</span> JSONPullParser(json);
+
+<span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> token <span class="hljs-keyword">of</span> parser) {
+  <span class="hljs-keyword">switch</span> (token.type) {
+    <span class="hljs-keyword">case</span> JSONPullParser.StartObject:
+      <span class="hljs-keyword">break</span>;
+    <span class="hljs-keyword">case</span> JSONPullParser.EndObject:
+      <span class="hljs-keyword">break</span>;
+    <span class="hljs-keyword">case</span> JSONPullParser.StartArray:
+      <span class="hljs-keyword">break</span>;
+    <span class="hljs-keyword">case</span> JSONPullParser.EndArray:
+      <span class="hljs-keyword">break</span>;
+    <span class="hljs-keyword">case</span> JSONPullParser.String:
+      <span class="hljs-keyword">break</span>;
+    <span class="hljs-keyword">case</span> JSONPullParser.Number:
+      <span class="hljs-keyword">break</span>;
+    <span class="hljs-keyword">case</span> JSONPullParser.TrueLiteral:
+      <span class="hljs-keyword">break</span>;
+    <span class="hljs-keyword">case</span> JSONPullParser.FalseLiteral:
+      <span class="hljs-keyword">break</span>;
+    <span class="hljs-keyword">case</span> JSONPullParser.NullLiteral:
+      <span class="hljs-keyword">break</span>;
+    <span class="hljs-keyword">case</span> JSONPullParser.Error:
+      <span class="hljs-keyword">break</span>;
+  }
+}
+
+</code></pre></section></section><section id="sec-Conformance" secid="2"><h2><span class="spec-secid" title="link to this section"><a href="#sec-Conformance">2</a></span>Conformance</h2><p><code>JSONPullParser</code> tries to conform to <a href="http://www.json.org">ECMA 404</a>.</p><p><a href="https://github.com/json-schema-org/JSON-Schema-Test-Suite">JSON&#8208;Schema&#8208;Test&#8208;Suite</a> and <a href="http://www.json.org/JSON_checker/">JSON_checker</a> are both used to validate the parser as well as comparing the output from <code>JSON.parse</code> with <code>JSONPullParser.parse</code> on a number of real life testcases.</p><p><code>JSONPullParser</code> currently delegates string and number parsing is delegated to <code>JSON.parse</code>.</p></section><section id="sec-Results" secid="3"><h2><span class="spec-secid" title="link to this section"><a href="#sec-Results">3</a></span>Results</h2><p><code>JSONPullParser</code> will obviously be slower than using native <code>JSON.parse</code>. However it is mainly intended to be used when a constant frame rate or not freezing the user interface is more important than performance.</p><div>
+  <svg version="1.1"
+       baseProfile="full"
+       width="200"
+       height="130"
+       viewBox="0 0 200 130"
+       xmlns="http://www.w3.org/2000/svg">
+    <path d="M89,9 h4 l4,-4 l-4,4 h4 l4,-4 l-4,4 h4 l4,-4 l-4,4 h4 l4,-4 l-4,4 h4" stroke="black"/>
+    <path d="M99,9 L100,10 L101,9 z" stroke="black" fill="black"/>
+    <line x1="100" y1="10" x2="178" y2="54" stroke="black" fill="black"/>
+    <circle cx="178" cy="54" r="10" stroke="none" fill="black"/>
+  </svg>
+  <pre>
+json.length:          17.53mb
+JSON.parse:           188ms
+JSONPullParser.parse: 316ms
+Equality:             true
+JSON.parse done in 170ms
+JSON.parse done in 184ms
+JSONPullParser parsed 1M tokens in 480ms using 1001 fragments
+JSONPullParser parsed 1M tokens in 396ms using 1001 fragments
+  </pre>
+</div><p>Se live <a href="demo.html">demo</a>! </p></section><footer>Written in <a href="http://leebyron.com/spec-md/" target="_blank">Spec Markdown</a>.</footer><input hidden class="spec-sidebar-toggle" type="checkbox" id="spec-sidebar-toggle" aria-hidden /><label for="spec-sidebar-toggle" aria-hidden>&#x2630;</label><div class="spec-sidebar" aria-hidden><div class="spec-toc"><div class="title"><a href="#">JSONPullParser</a></div><ol><li id="_sidebar_1"><a href="#sec-Getting-started"><span class="spec-secid">1</span>Getting started</a><input hidden class="toggle" type="checkbox" id="_sidebar_toggle_1" /><label for="_sidebar_toggle_1"></label><ol><li id="_sidebar_1.1"><a href="#sec-ObjectBuilder"><span class="spec-secid">1.1</span>ObjectBuilder</a></li><li id="_sidebar_1.2"><a href="#sec-Custom-handling-of-events"><span class="spec-secid">1.2</span>Custom handling of events</a></li></ol></li><li id="_sidebar_2"><a href="#sec-Conformance"><span class="spec-secid">2</span>Conformance</a></li><li id="_sidebar_3"><a href="#sec-Results"><span class="spec-secid">3</span>Results</a></li></ol></div><script>
+(function () {
+var currentSection;
+var numberedSections = [];
+
+var sections = document.getElementsByTagName('section');
+for (var i = 0; i < sections.length; i++) {
+  if (sections[i].getAttribute('secid')) {
+    numberedSections.push(sections[i]);
+  }
+}
+
+var scrollPos = window.scrollY;
+var pending = false;
+window.addEventListener('scroll', function (e) {
+  scrollPos = window.scrollY;
+  if (!pending) {
+    pending = true;
+    window.requestAnimationFrame(function () {
+      updateSectionFocus(scrollPos);
+      pending = false;
+    });
+  }
+});
+
+function updateSectionFocus(pos) {
+  var readLine = pos + document.documentElement.clientHeight / 4;
+
+  var focusedSection;
+  for (var n = numberedSections.length - 1; n >= 0; n--) {
+    if (numberedSections[n].offsetTop < readLine) {
+      focusedSection = numberedSections[n];
+      break;
+    }
+  }
+
+  var secid = focusedSection && focusedSection.getAttribute('secid');
+  if (secid !== currentSection) {
+    currentSection && fold(currentSection, false);
+    secid && fold(secid, true);
+    currentSection = secid;
+  }
+}
+
+function fold(secid, check) {
+  document.getElementById('_sidebar_' + secid).className = check ? 'viewing' : '';
+  var sections = secid.split('.');
+  while (sections.length) {
+    var toggle = document.getElementById('_sidebar_toggle_' + sections.join('.'));
+    if (toggle) {
+      toggle.checked = check;
+    }
+    sections.pop();
+  }
+}
+
+updateSectionFocus(window.scrollY);
+})();</script></div></body></html>

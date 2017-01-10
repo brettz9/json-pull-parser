@@ -1,0 +1,20 @@
+{
+  "name": "json-pull-parser",
+  "version": "1.0.0",
+  "description": "JSON pull parser",
+  "main": "index.js",
+  "scripts": {
+    "build": "webpack",
+    "test": "node ./test"
+  },
+  "keywords": [
+    "json"
+  ],
+  "author": "John Susi <john@susi.se> (https://github.com/johnsusi/)",
+  "license": "MIT",
+  "devDependencies": {
+    "glob": "^7.1.1",
+    "json-schema-test-suite": "^0.0.10",
+    "webpack": "beta"
+  }
+}

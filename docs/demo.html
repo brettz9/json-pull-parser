@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <title>JSONPullParser demo</title>
+    <script src="../dist/json-pull-parser.js"></script>
+  </head>
+  <body>
+    <h2>JSONPullParser demo</h2>
+    <svg version="1.1"
+         baseProfile="full"
+         width="200"
+         height="130"
+         viewBox="0 0 200 130"
+         xmlns="http://www.w3.org/2000/svg">
+      <path d="M89,9 h4 l4,-4 l-4,4 h4 l4,-4 l-4,4 h4 l4,-4 l-4,4 h4 l4,-4 l-4,4 h4" stroke="black"/>
+      <path d="M99,9 L100,10 L101,9 z" stroke="black" fill="black"/>
+      <line x1="100" y1="10" x2="100" y2="100" stroke="black" fill="black"/>
+      <circle cx="100" cy="110" r="10" stroke="none" fill="black"/>
+    </svg>
+    <br>
+    <button onclick="parseJSON()">JSON.parse</button>
+    <button onclick="parseJSONPullParser()">JSONPullParser.parse</button>
+    <button onclick="bench()">Reset</button>
+    <pre>
+      Please wait, benchmarking!
+    </pre>
+    <script>
+      var theta_d2 = 0;
+      var theta_d1 = 0;
+      var theta    = 110 * Math.PI * 2 / 360;
+
+      var mark;
+      function draw(timestamp) {
+        var steps = 1;
+        if (!mark) mark = timestamp;
+        else if (timestamp - mark >= 17) steps = Math.floor((timestamp - mark) / (1000/60));
+        mark = timestamp;
+
+        var start = Date.now();
+        for (var i = 0;i < steps;++i) {
+          theta_d2 =  9.81*Math.sin(theta) / 90;
+          theta_d1 += theta_d2 * 0.20;
+          theta    += theta_d1 * 0.20;
+        }
+
+        if (steps > 1) console.log('skipped');
+
+        var x = 100 + 90*Math.sin(theta);
+        var y =  10 - 90*Math.cos(theta)
+
+        var circle = document.querySelector('circle');
+        circle.setAttribute('cx', x);
+        circle.setAttribute('cy', y);
+
+        var line = document.querySelector('line');
+        line.setAttribute('x2', x);
+        line.setAttribute('y2', y);
+
+
+        while (Date.now() - start < 15 && tasks.length > 0) {
+          if (tasks[0].next().done) tasks.shift();
+        }
+
+        requestAnimationFrame(draw)
+      }
+
+      var json = '';
+
+      requestAnimationFrame(draw)
+
+      function bench() {
+        var data = [];
+        for (var i = 0;i < 1e6;++i) data.push(Math.random() * 1e16);
+        json = JSON.stringify(data);
+        var t1 = Date.now();
+        var o1 = JSON.parse(json);
+        t1 = Date.now() - t1;
+
+        while (t1 < 500 && json.length < 10e6) {
+          data = data.concat(data);
+          json = JSON.stringify(data);
+          t1 = Date.now();
+          o1 = JSON.parse(json);
+          t1 = Date.now() - t1;
+        }
+
+        var t2 = Date.now();
+        var o2 = JSONPullParser.parse(json);
+        t2 = Date.now() - t2;
+
+        var same = JSON.stringify(o1) === JSON.stringify(o2);
+        var log = document.querySelector("pre");
+        log.innerHTML = 'json.length:          ' + (json.length / 1e6).toFixed(2) + 'mb' + "\n" +
+                        'JSON.parse:           ' + t1 + 'ms' + "\n" +
+                        'JSONPullParser.parse: ' + t2 + 'ms' + "\n" +
+                        'Equality:             ' + same + "\n";
+      }
+
+      setTimeout(bench, 1);
+
+      function parseJSON() {
+        setTimeout(function () {
+          var parseStartTime = Date.now();
+          JSON.parse(json);
+          var log = document.querySelector("pre");
+          log.innerHTML += "JSON.parse done in " + (Date.now() - parseStartTime) + "ms\n";
+        }, 0);
+      }
+
+      var tasks = [];
+      var id = 0;
+
+      function parseJSONPullParser() {
+        var gid = ++id;
+        var builder = new JSONPullParser.ObjectBuilder();
+        var parser = new JSONPullParser(json);
+        var tokens = parser.tokens();
+        var fragments = 0;
+        var parseStartTime = 0;
+        var count = 0;
+
+        tasks.push({
+          next: function () {
+            if (fragments == 0) parseStartTime = Date.now();
+            ++fragments;
+            var fragmentStartTime = Date.now();
+
+            for (var i = 0;i < 1e3;++i) {
+              var token = tokens.next();
+              if (token.done) {
+                var log = document.querySelector("pre");
+                log.innerHTML += "JSONPullParser parsed " + (count / 1e6).toFixed(0) + "M tokens in " + (Date.now() - parseStartTime) + 'ms using ' + fragments + " fragments\n";
+                return { done: true };
+              }
+              builder.handle(token);
+              ++count;
+            }
+            return { done: false };
+          }
+        });
+      }
+
+    </script>
+  </body>
+</html>
