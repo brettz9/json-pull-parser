@@ -44,8 +44,6 @@
           theta    += theta_d1 * 0.20;
         }
 
-        if (steps > 1) console.log('skipped');
-
         var x = 100 + 90*Math.sin(theta);
         var y =  10 - 90*Math.cos(theta)
 
@@ -77,7 +75,7 @@
         var o1 = JSON.parse(json);
         t1 = Date.now() - t1;
 
-        while (t1 < 500 && json.length < 10e6) {
+        while (t1 < 500 && json.length < 100e6) {
           data = data.concat(data);
           json = JSON.stringify(data);
           t1 = Date.now();
