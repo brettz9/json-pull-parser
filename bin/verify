@@ -1,0 +1,8 @@
+#!/usr/bin/env node
+
+var JSONPullParser = require('../');
+
+var content = '';
+process.stdin.resume();
+process.stdin.on('data', data => content += data.toString());
+process.stdin.on('end',  ()   => console.log(JSONPullParser.parse(content)));

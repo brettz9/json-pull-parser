@@ -19,9 +19,6 @@
     "src/builder.js",
     "src/parser.js"
   ],
-  "bin": {
-    "json-pull-parser": "./src/cli.js"
-  },
   "devDependencies": {
     "glob": "^7.1.1",
     "json-schema-test-suite": "^0.0.10",
