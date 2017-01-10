@@ -15,7 +15,7 @@ let builder = new JSONPullParser.ObjectBuilder();
 for (let token of parser) builder.handle(token);
 ```
 
-Se live [demo](http://www.susi.se/json-pull-parser/demo.html)!
+See live [demo](http://www.susi.se/json-pull-parser/demo.html)!
 
 # Getting started
 
@@ -143,4 +143,4 @@ JSONPullParser parsed 1M tokens in 396ms using 1001 fragments
   </pre>
 </div>
 
-Se live [demo](http://www.susi.se/json-pull-parser/demo.html)!
+See live [demo](http://www.susi.se/json-pull-parser/demo.html)!
