@@ -1,6 +1,6 @@
 {
   "name": "json-pull-parser",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "author": "John Susi <john@susi.se> (https://github.com/johnsusi/)",
   "description": "JSON pull parser",
   "license": "MIT",
