@@ -51,6 +51,24 @@ while (true) {
 sequence. `StartObject` and `StartArray` will always have a matching `EndObject`
 and `EndArray` at the correct depth.
 
+## Installation
+
+**Node (CommonJS)**
+
+```sh
+$ npm install json-pull-parser
+```
+
+```javascript
+const JSONPullParser = require('json-pull-parser')
+```
+
+**Browser**
+
+```html
+<script src="https://unpkg.com/json-pull-parser/dist/json-pull-parser.js"></script>
+```
+
 ## ObjectBuilder
 
 `ObjectBuilder` builds the resulting *JavaScript* object from the *tokens*. Its
