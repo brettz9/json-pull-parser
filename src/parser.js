@@ -86,6 +86,7 @@ JSONPullParser.parse = function(text, reviever)
 function TokenIterator(text)
 {
   var state = {
+    d: false,       // done
     s: text,
     f: 0,           // position
     l: text.length, // length
@@ -97,7 +98,11 @@ function TokenIterator(text)
   return {
     next: function () {
       // console.log(`next: ${state.f}, ${state.l}, ${text.charCodeAt(state.f).toString(16)}`)
-      if (state.f === state.l) return { done: true };
+      if (state.f === state.l) {
+        return (state.e || state.x.length > 0)
+          ? { done: false, value: ParserError(state.s, state.l, state.l, 'Unexpected end of JSON input') }
+          : { done: true };
+      }
       var token = parseValue(state);
       state.f = token.last;
       return { value: token, done: false };

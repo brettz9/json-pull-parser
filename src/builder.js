@@ -1,13 +1,11 @@
-function ObjectBuilder()
-{
+function ObjectBuilder() {
   this.handler = {
     ref: this,
     add: function (value) { this.ref.value = value; return value; },
   };
 }
 
-ObjectBuilder.prototype.startObject = function ()
-{
+ObjectBuilder.prototype.startObject = function () {
   this.handler = {
     old: this.handler,
     key: null,
@@ -17,16 +15,14 @@ ObjectBuilder.prototype.startObject = function ()
       else { this.ref[this.key] = value; this.key = null; }
       return value;
     },
-  }
+  };
 }
 
-ObjectBuilder.prototype.endObject = function ()
-{
+ObjectBuilder.prototype.endObject = function () {
   this.handler = this.handler.old;
 }
 
-ObjectBuilder.prototype.startArray = function ()
-{
+ObjectBuilder.prototype.startArray = function () {
   this.handler = {
     old: this.handler,
     ref: this.handler.add([]),
@@ -34,39 +30,37 @@ ObjectBuilder.prototype.startArray = function ()
       this.ref.push(value);
       return value;
     },
-  }
+  };
 }
 
 ObjectBuilder.prototype.endArray = ObjectBuilder.prototype.endObject;
 
-ObjectBuilder.prototype.add = function (value)
-{
+ObjectBuilder.prototype.add = function (value) {
   this.handler.add(value);
 }
 
-ObjectBuilder.prototype.handle = function (token)
-{
+ObjectBuilder.prototype.handle = function (token) {
   switch (token.type) {
-    case JSONPullParser.StartObject:
-      builder.startObject();
+    case '{':
+      this.startObject();
       break;
-    case JSONPullParser.EndObject:
-      builder.endObject();
+    case '}':
+      this.endObject();
       break;
-    case JSONPullParser.StartArray:
-      builder.startArray();
+    case '[':
+      this.startArray();
       break;
-    case JSONPullParser.EndArray:
-      builder.endArray();
+    case ']':
+      this.endArray();
       break;
-    case JSONPullParser.String:
-    case JSONPullParser.Number:
-    case JSONPullParser.TrueLiteral:
-    case JSONPullParser.FalseLiteral:
-    case JSONPullParser.NullLiteral:
-      builder.add(token.value);
+    case 'string':
+    case 'number':
+    case 'true':
+    case 'false':
+    case 'null':
+      this.add(token.value);
       break;
-    case JSONPullParser.Error:
+    case 'error':
       throw new SyntaxError(token.value.message);
   }
 }
