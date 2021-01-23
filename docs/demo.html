@@ -26,53 +26,55 @@
       Please wait, benchmarking!
     </pre>
     <script>
-      var theta_d2 = 0;
-      var theta_d1 = 0;
-      var theta    = 110 * Math.PI * 2 / 360;
+      let theta_d2 = 0;
+      let theta_d1 = 0;
+      let theta = 110 * Math.PI * 2 / 360;
 
-      var mark;
-      function draw(timestamp) {
-        var steps = 1;
+      let mark;
+      function draw (timestamp) {
+        let steps = 1;
         if (!mark) mark = timestamp;
-        else if (timestamp - mark >= 17) steps = Math.floor((timestamp - mark) / (1000/60));
+        else if (timestamp - mark >= 17) steps = Math.floor((timestamp - mark) / (1000 / 60));
         mark = timestamp;
 
-        var start = Date.now();
-        for (var i = 0;i < steps;++i) {
-          theta_d2 =  9.81*Math.sin(theta) / 90;
-          theta_d1 += theta_d2 * 0.20;
-          theta    += theta_d1 * 0.20;
+        const start = Date.now();
+        for (let i = 0; i < steps; ++i) {
+          theta_d2 = 9.81 * Math.sin(theta) / 90;
+          theta_d1 += theta_d2 * 0.2;
+          theta += theta_d1 * 0.2;
         }
 
-        var x = 100 + 90*Math.sin(theta);
-        var y =  10 - 90*Math.cos(theta)
+        const x = 100 + 90 * Math.sin(theta);
+        const y = 10 - 90 * Math.cos(theta);
 
-        var circle = document.querySelector('circle');
+        const circle = document.querySelector('circle');
         circle.setAttribute('cx', x);
         circle.setAttribute('cy', y);
 
-        var line = document.querySelector('line');
+        const line = document.querySelector('line');
         line.setAttribute('x2', x);
         line.setAttribute('y2', y);
-
 
         while (Date.now() - start < 15 && tasks.length > 0) {
           if (tasks[0].next().done) tasks.shift();
         }
 
-        requestAnimationFrame(draw)
+        requestAnimationFrame(draw);
       }
 
-      var json = '';
+      let json = '';
 
-      requestAnimationFrame(draw)
+      requestAnimationFrame/**
+ *
+ */
+(draw);
 
-      function bench() {
-        var data = [];
-        for (var i = 0;i < 1e6;++i) data.push(Math.random() * 1e16);
+      function bench () {
+        let data = [];
+        for (let i = 0; i < 1e6; ++i) data.push(Math.random() * 1e16);
         json = JSON.stringify(data);
-        var t1 = Date.now();
-        var o1 = JSON.parse(json);
+        let t1 = Date.now();
+        let o1 = JSON.parse(json);
         t1 = Date.now() - t1;
 
         while (t1 < 500 && json.length < 100e6) {
@@ -83,62 +85,61 @@
           t1 = Date.now() - t1;
         }
 
-        var t2 = Date.now();
-        var o2 = JSONPullParser.parse(json);
+        let t2 = Date.now();
+        const o2 = JSONPullParser.parse(json);
         t2 = Date.now() - t2;
 
-        var same = JSON.stringify(o1) === JSON.stringify(o2);
-        var log = document.querySelector("pre");
-        log.innerHTML = 'json.length:          ' + (json.length / 1e6).toFixed(2) + 'mb' + "\n" +
-                        'JSON.parse:           ' + t1 + 'ms' + "\n" +
-                        'JSONPullParser.parse: ' + t2 + 'ms' + "\n" +
-                        'Equality:             ' + same + "\n";
+        const same = JSON.stringify(o1) === JSON.stringify(o2);
+        const log = document.querySelector('pre');
+        log.innerHTML = 'json.length:          ' + (json.length / 1e6).toFixed(2) + 'mb' + '\n' +
+                        'JSON.parse:           ' + t1 + 'ms' + '\n' +
+                        'JSONPullParser.parse: ' + t2 + 'ms' + '\n' +
+                        'Equality:             ' + same + '\n';
       }
 
       setTimeout(bench, 1);
 
-      function parseJSON() {
+      function parseJSON () {
         setTimeout(function () {
-          var parseStartTime = Date.now();
+          const parseStartTime = Date.now();
           JSON.parse(json);
-          var log = document.querySelector("pre");
-          log.innerHTML += "JSON.parse done in " + (Date.now() - parseStartTime) + "ms\n";
+          const log = document.querySelector('pre');
+          log.innerHTML += 'JSON.parse done in ' + (Date.now() - parseStartTime) + 'ms\n';
         }, 0);
       }
 
       var tasks = [];
-      var id = 0;
+      let id = 0;
 
-      function parseJSONPullParser() {
-        var gid = ++id;
-        var builder = new JSONPullParser.ObjectBuilder();
-        var parser = new JSONPullParser(json);
-        var tokens = parser.tokens();
-        var fragments = 0;
-        var parseStartTime = 0;
-        var count = 0;
+      function parseJSONPullParser () {
+        const gid = ++id;
+        const builder = new JSONPullParser.ObjectBuilder();
+        const parser = new JSONPullParser(json);
+        const tokens = parser.tokens();
+        let fragments = 0;
+        let parseStartTime = 0;
+        let count = 0;
 
         tasks.push({
-          next: function () {
-            if (fragments == 0) parseStartTime = Date.now();
-            ++fragments;
-            var fragmentStartTime = Date.now();
+          next () {
+      if (fragments == 0) parseStartTime = Date.now();
+      ++fragments;
+      const fragmentStartTime = Date.now();
 
-            for (var i = 0;i < 1e3;++i) {
-              var token = tokens.next();
+      for (let i = 0; i < 1e3; ++i) {
+              const token = tokens.next();
               if (token.done) {
-                var log = document.querySelector("pre");
-                log.innerHTML += "JSONPullParser parsed " + (count / 1e6).toFixed(0) + "M tokens in " + (Date.now() - parseStartTime) + 'ms using ' + fragments + " fragments\n";
-                return { done: true };
+                const log = document.querySelector('pre');
+                log.innerHTML += 'JSONPullParser parsed ' + (count / 1e6).toFixed(0) + 'M tokens in ' + (Date.now() - parseStartTime) + 'ms using ' + fragments + ' fragments\n';
+                return {done: true};
               }
               builder.handle(token);
               ++count;
-            }
-            return { done: false };
-          }
+      }
+      return {done: false};
+    }
         });
       }
-
     </script>
   </body>
 </html>

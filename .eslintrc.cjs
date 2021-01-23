@@ -1,13 +1,14 @@
 'use strict';
 
 module.exports = {
+  extends: [
+    'ash-nazg/sauron-node'
+  ],
+  parser: 'babel-eslint',
   parserOptions: {
     ecmaVersion: 2020,
     sourceType: 'module'
   },
-  extends: [
-    'ash-nazg/sauron'
-  ],
   env: {
     browser: false,
     es6: true
@@ -31,6 +32,19 @@ module.exports = {
     ],
     rules: {
       'import/no-commonjs': 0
+    }
+  }, {
+    files: 'test/index.js',
+    parser: 'babel-eslint',
+    parserOptions: {
+      ecmaVersion: 2020,
+      sourceType: 'module'
+    },
+    rules: {
+      'node/no-unsupported-features/es-syntax': ['error', {
+        ignores: ['dynamicImport', 'modules']
+      }],
+      'no-console': 0
     }
   }, {
     files: ['*.md'],
