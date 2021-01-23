@@ -1,10 +1,25 @@
-const JSONPullParser = require(__dirname + '/..');
+/* eslint-disable node/no-sync -- Ok for tests */
+import assert from 'assert';
+import fs from 'fs';
+import {join, dirname} from 'path';
+import {fileURLToPath} from 'url';
+import vm from 'vm';
+import glb from 'glob';
 
-const assert = require('assert');
-const fs = require('fs');
-const glob = require('glob').sync;
+import testSuite from 'json-schema-test-suite';
 
-glob(__dirname + '/**/fail*.json').forEach((file) => {
+const glob = glb.sync;
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
+const globRelativePath = (path) => {
+  return glob(join(__dirname, path));
+};
+
+(async () => {
+// eslint-disable-next-line no-unsanitized/method -- Own tests
+const JSONPullParser = (await import(__dirname + '/../index.js')).default;
+globRelativePath('/**/fail*.json').forEach((file) => {
   console.log(file);
   const test = fs.readFileSync(file).toString();
   assert.throws(() => {
@@ -12,23 +27,20 @@ glob(__dirname + '/**/fail*.json').forEach((file) => {
   });
 });
 
-glob(__dirname + '/**/pass*.json').forEach((file) => {
+globRelativePath('/**/pass*.json').forEach((file) => {
   console.log(file);
   const test = fs.readFileSync(file).toString();
 
-  const o1 = JSONPullParser.parse(test);
+  let o1 = JSONPullParser.parse(test);
   assert.doesNotThrow(() => {
-    const o1 = JSONPullParser.parse(test);
+    o1 = JSONPullParser.parse(test);
     const o2 = JSON.parse(test);
 
     assert.deepStrictEqual(o1, o2);
   });
 });
 
-const util = require('util');
-const vm = require('vm');
-
-glob(__dirname + '/js/**/*.js').forEach((file) => {
+globRelativePath('/js/**/*.js').forEach((file) => {
   console.log(file);
   const sandbox = {
     assert: {
@@ -37,6 +49,7 @@ glob(__dirname + '/js/**/*.js').forEach((file) => {
           block();
           assert.fail();
         } catch (err) {
+          // eslint-disable-next-line no-restricted-syntax -- Frame safe
           assert(err instanceof type, `Expected ${type}, got ${err}`);
         }
       },
@@ -52,11 +65,9 @@ glob(__dirname + '/js/**/*.js').forEach((file) => {
   const source = fs.readFileSync(file).toString();
   const script = new vm.Script(source);
 
-  const context = new vm.createContext(sandbox);
+  const context = vm.createContext(sandbox);
   script.runInContext(context);
 });
-
-const testSuite = require('json-schema-test-suite');
 
 const factory = function (schema, options) {
   return {
@@ -76,23 +87,28 @@ const factory = function (schema, options) {
           if (!e1) {
             console.log(json);
             console.error(err);
+            // eslint-disable-next-line max-len -- Necessary
+            // eslint-disable-next-line unicorn/no-process-exit -- Immediate feedback
             process.exit(-1);
           }
         }
 
         if (e1) return {valid: false, errors: [e1.message]};
 
-        return s1 === s2 ? {valid: true} : {valid: false, errors: ['not equal']};
+        return s1 === s2
+          ? {valid: true}
+          : {valid: false, errors: ['not equal']};
       } catch (err) {
         console.error(err);
+        return {valid: false, errors: ['oops']};
       }
     }
   };
 };
 
-const tests = testSuite.testSync(factory);
+/* const tests = */ testSuite.testSync(factory);
 
-glob(__dirname + '/json/benchmark/**.json').forEach((file) => {
+globRelativePath('/json/benchmark/**.json').forEach((file) => {
   console.log(file);
   const source = fs.readFileSync(file).toString();
   console.time('JSON');
@@ -108,3 +124,4 @@ glob(__dirname + '/json/benchmark/**.json').forEach((file) => {
   assert.deepStrictEqual(o1, o2);
   assert.equal(JSON.stringify(o1), JSON.stringify(o2));
 });
+})();
