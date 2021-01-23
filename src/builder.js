@@ -85,7 +85,7 @@ class ObjectBuilder {
     case 'error':
       throw new SyntaxError(token.value.message);
     default:
-      throw new TypeError('Unexpected token type');
+      break;
     }
   }
 }
