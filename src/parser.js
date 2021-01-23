@@ -124,6 +124,7 @@ JSONPullParser.parse = function (text, reviver) {
 
 /**
  * @param {string} text
+ * @yields {Token|TokenEnd}
  * @returns {void}
  */
 function * tokenIterator (text) {

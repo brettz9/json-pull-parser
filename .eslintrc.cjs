@@ -47,13 +47,34 @@ module.exports = {
       'no-console': 0
     }
   }, {
-    files: ['*.md'],
+    files: '*.html',
+    env: {
+      browser: true
+    },
     globals: {
-      json: true,
-      token: true,
       JSONPullParser: true
     },
     rules: {
+      'import/unambiguous': 0
+    }
+  }, {
+    files: ['*.md'],
+    globals: {
+      json: true,
+      require: true,
+      JSONPullParser: true
+    },
+    rules: {
+      'import/no-commonjs': 0,
+      'no-shadow': ['error', {
+        allow: ['JSONPullParser']
+      }],
+      'no-unused-vars': ['error', {
+        varsIgnorePattern: 'token|JSONPullParser'
+      }],
+      'node/no-missing-require': ['error', {
+        allowModules: ['json-pull-parser']
+      }],
       'import/unambiguous': 0
     }
   }],

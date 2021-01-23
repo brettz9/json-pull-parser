@@ -26,22 +26,28 @@
       Please wait, benchmarking!
     </pre>
     <script>
-      let theta_d2 = 0;
-      let theta_d1 = 0;
+      let thetaD1 = 0;
       let theta = 110 * Math.PI * 2 / 360;
 
       let mark;
+
+      /**
+       * @param {Integer} timestamp
+       * @returns {void}
+       */
       function draw (timestamp) {
         let steps = 1;
         if (!mark) mark = timestamp;
-        else if (timestamp - mark >= 17) steps = Math.floor((timestamp - mark) / (1000 / 60));
+        else if (timestamp - mark >= 17) {
+          steps = Math.floor((timestamp - mark) / (1000 / 60));
+        }
         mark = timestamp;
 
         const start = Date.now();
         for (let i = 0; i < steps; ++i) {
-          theta_d2 = 9.81 * Math.sin(theta) / 90;
-          theta_d1 += theta_d2 * 0.2;
-          theta += theta_d1 * 0.2;
+          const thetaD2 = 9.81 * Math.sin(theta) / 90;
+          thetaD1 += thetaD2 * 0.2;
+          theta += thetaD1 * 0.2;
         }
 
         const x = 100 + 90 * Math.sin(theta);
@@ -64,11 +70,11 @@
 
       let json = '';
 
-      requestAnimationFrame/**
- *
- */
-(draw);
+      requestAnimationFrame(draw);
 
+      /**
+       * @returns {void}
+       */
       function bench () {
         let data = [];
         for (let i = 0; i < 1e6; ++i) data.push(Math.random() * 1e16);
@@ -78,7 +84,7 @@
         t1 = Date.now() - t1;
 
         while (t1 < 500 && json.length < 100e6) {
-          data = data.concat(data);
+          data = [...data, ...data];
           json = JSON.stringify(data);
           t1 = Date.now();
           o1 = JSON.parse(json);
@@ -91,28 +97,38 @@
 
         const same = JSON.stringify(o1) === JSON.stringify(o2);
         const log = document.querySelector('pre');
-        log.innerHTML = 'json.length:          ' + (json.length / 1e6).toFixed(2) + 'mb' + '\n' +
-                        'JSON.parse:           ' + t1 + 'ms' + '\n' +
-                        'JSONPullParser.parse: ' + t2 + 'ms' + '\n' +
-                        'Equality:             ' + same + '\n';
+        log.textContent = 'json.length:          ' +
+          (json.length / 1e6).toFixed(2) + 'mb' + '\n' +
+          'JSON.parse:           ' + t1 + 'ms' + '\n' +
+          'JSONPullParser.parse: ' + t2 + 'ms' + '\n' +
+          'Equality:             ' + same + '\n';
       }
 
       setTimeout(bench, 1);
 
+      /* eslint-disable no-unused-vars -- Apparently a HTML parser bug */
+      /**
+      * @returns {void}
+      */
       function parseJSON () {
         setTimeout(function () {
           const parseStartTime = Date.now();
           JSON.parse(json);
           const log = document.querySelector('pre');
-          log.innerHTML += 'JSON.parse done in ' + (Date.now() - parseStartTime) + 'ms\n';
+          log.textContent += 'JSON.parse done in ' +
+            (Date.now() - parseStartTime) + 'ms\n';
         }, 0);
       }
 
-      var tasks = [];
-      let id = 0;
+      const tasks = [];
+      // let id = 0;
 
+      /**
+      * @returns {void}
+      */
       function parseJSONPullParser () {
-        const gid = ++id;
+        /* eslint-enable no-unused-vars -- Apparently a HTML parser bug */
+        // const gid = ++id;
         const builder = new JSONPullParser.ObjectBuilder();
         const parser = new JSONPullParser(json);
         const tokens = parser.tokens();
@@ -122,22 +138,25 @@
 
         tasks.push({
           next () {
-      if (fragments == 0) parseStartTime = Date.now();
-      ++fragments;
-      const fragmentStartTime = Date.now();
+            if (fragments === 0) parseStartTime = Date.now();
+            ++fragments;
+            // const fragmentStartTime = Date.now();
 
-      for (let i = 0; i < 1e3; ++i) {
+            for (let i = 0; i < 1e3; ++i) {
               const token = tokens.next();
               if (token.done) {
                 const log = document.querySelector('pre');
-                log.innerHTML += 'JSONPullParser parsed ' + (count / 1e6).toFixed(0) + 'M tokens in ' + (Date.now() - parseStartTime) + 'ms using ' + fragments + ' fragments\n';
+                log.textContent += 'JSONPullParser parsed ' +
+                  (count / 1e6).toFixed(0) + 'M tokens in ' +
+                  (Date.now() - parseStartTime) + 'ms using ' +
+                  fragments + ' fragments\n';
                 return {done: true};
               }
               builder.handle(token);
               ++count;
-      }
-      return {done: false};
-    }
+            }
+            return {done: false};
+          }
         });
       }
     </script>

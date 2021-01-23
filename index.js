@@ -20,9 +20,7 @@ const N = 1e6;
 
 const o = [];
 for (let i = 0; i < N; ++i) {
-  o.push(null);
-  o.push(true);
-  o.push(false);
+  o.push(null, true, false);
   // o.push(((Math.random() - 0.5) * 1e12));
   // o.push(((Math.random() - 0.5) * 1e12).toString(36));
   // o[ ((Math.random() - 0.5) * 1e12).toString(36) ] =
