@@ -1,46 +1,68 @@
-function ObjectBuilder() {
-  this.handler = {
-    ref: this,
-    add: function (value) { this.ref.value = value; return value; },
-  };
-}
+/**
+ *
+ */
+class ObjectBuilder {
+  /**
+   *
+   */
+  constructor () {
+    this.handler = {
+      ref: this,
+      add (value) { this.ref.value = value; return value; }
+    };
+  }
 
-ObjectBuilder.prototype.startObject = function () {
-  this.handler = {
-    old: this.handler,
-    key: null,
-    ref: this.handler.add({}),
-    add: function (value) {
-      if (this.key === null) this.key = value;
-      else { this.ref[this.key] = value; this.key = null; }
-      return value;
-    },
-  };
-}
+  /**
+   * @returns {void}
+   */
+  startObject () {
+    this.handler = {
+      old: this.handler,
+      key: null,
+      ref: this.handler.add({}),
+      add (value) {
+        if (this.key === null) this.key = value;
+        else { this.ref[this.key] = value; this.key = null; }
+        return value;
+      }
+    };
+  }
 
-ObjectBuilder.prototype.endObject = function () {
-  this.handler = this.handler.old;
-}
+  /**
+   * @returns {void}
+   */
+  endObject () {
+    this.handler = this.handler.old;
+  }
 
-ObjectBuilder.prototype.startArray = function () {
-  this.handler = {
-    old: this.handler,
-    ref: this.handler.add([]),
-    add: function (value) {
-      this.ref.push(value);
-      return value;
-    },
-  };
-}
+  /**
+   * @returns {void}
+   */
+  startArray () {
+    this.handler = {
+      old: this.handler,
+      ref: this.handler.add([]),
+      add (value) {
+        this.ref.push(value);
+        return value;
+      }
+    };
+  }
 
-ObjectBuilder.prototype.endArray = ObjectBuilder.prototype.endObject;
+  /**
+   * @param {JSONValueOrError} value
+   * @returns {void}
+   */
+  add (value) {
+    this.handler.add(value);
+  }
 
-ObjectBuilder.prototype.add = function (value) {
-  this.handler.add(value);
-}
-
-ObjectBuilder.prototype.handle = function (token) {
-  switch (token.type) {
+  /**
+   * @param {Token|TokenEnd} token
+   * @returns {void}
+   */
+  handle (token) {
+    switch (token.type) {
     case '{':
       this.startObject();
       break;
@@ -62,7 +84,12 @@ ObjectBuilder.prototype.handle = function (token) {
       break;
     case 'error':
       throw new SyntaxError(token.value.message);
+    default:
+      throw new TypeError('Unexpected token type');
+    }
   }
 }
 
-module.exports = ObjectBuilder;
+ObjectBuilder.prototype.endArray = ObjectBuilder.prototype.endObject;
+
+export default ObjectBuilder;

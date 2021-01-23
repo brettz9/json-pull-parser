@@ -2,18 +2,30 @@
   "name": "json-pull-parser",
   "version": "1.0.2",
   "author": "John Susi <john@susi.se> (https://github.com/johnsusi/)",
+  "contributors": [
+    "Brett Zamir"
+  ],
   "description": "JSON pull parser",
   "license": "MIT",
   "main": "index.js",
+  "type": "module",
   "scripts": {
-    "build": "webpack",
+    "lint": "eslint --ext=js,md,html .",
+    "build": "rollup -c",
     "test": "node ./test",
-    "preversion": "npm test",
+    "preversion": "npm run lint && npm test",
     "version": "npm run build && git add -A dist",
     "postversion": "git push && git push --tags && npm publish"
   },
+  "repository": "https://github.com/johnsusi/json-pull-parser",
+  "bugs": "https://github.com/johnsusi/json-pull-parser/issues",
+  "homepage": "https://github.com/johnsusi/json-pull-parser#readme",
+  "engines": {
+    "node": ">=12"
+  },
   "keywords": [
-    "json"
+    "json",
+    "iterator"
   ],
   "files": [
     "dist/json-pull-parser.js",
@@ -22,11 +34,33 @@
     "src/builder.js",
     "src/parser.js"
   ],
+  "dependencies": {},
   "devDependencies": {
+    "@mysticatea/eslint-plugin": "^13.0.0",
+    "babel-eslint": "^10.1.0",
+    "eslint": "^7.18.0",
+    "eslint-config-ash-nazg": "^24.0.0",
+    "eslint-config-standard": "^16.0.2",
+    "eslint-plugin-array-func": "^3.1.7",
+    "eslint-plugin-compat": "^3.9.0",
+    "eslint-plugin-eslint-comments": "^3.2.0",
+    "eslint-plugin-html": "^6.1.1",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-jsdoc": "^31.0.8",
+    "eslint-plugin-markdown": "^1.0.2",
+    "eslint-plugin-no-unsanitized": "^3.1.4",
+    "eslint-plugin-no-use-extend-native": "^0.5.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-sonarjs": "^0.5.0",
+    "eslint-plugin-standard": "^4.1.0",
+    "eslint-plugin-unicorn": "^26.0.1",
     "glob": "^7.1.1",
     "json-schema-test-suite": "^0.0.10",
-    "webpack": "beta",
-    "xo": "^0.17.1"
+    "rollup": "^2.38.0",
+    "rollup-plugin-terser": "^7.0.2",
+    "typescript": "^4.1.3",
+    "xo": "^0.37.1"
   },
   "xo": {
     "space": true

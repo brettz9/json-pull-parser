@@ -1,18 +1,21 @@
-JSONPullParser
---------------
+# JSONPullParser
 
-**Introduction**
+## Introduction
 
-`JSONPullParser` is a dropin replacement for `JSON.parse` and also provides a
-pull based api.
+Originally forked from [`JSONPullParser`](https://www.npmjs.com/package/json-pull-parser)
+to expand on the types of iterators and to have available in source control.
 
-**Usage**
+A dropin replacement for `JSON.parse` and also provides a pull based api.
 
-```javascript
-let parser  = new JSONPullParser(json);
-let builder = new JSONPullParser.ObjectBuilder();
+## Usage
 
-for (let token of parser) builder.handle(token);
+```js
+const parser = new JSONPullParser(json);
+const builder = new JSONPullParser.ObjectBuilder();
+
+for (const token of parser) {
+  builder.handle(token);
+}
 ```
 
 See live [demo](http://www.susi.se/json-pull-parser/demo.html)!
@@ -26,23 +29,25 @@ If your *JavaScript* engine supports [Symbol.iterator](https://developer.mozilla
 then your parser is *iterable*.
 
 ```javascript
-let parser  = new JSONPullParser(json);
+const parser = new JSONPullParser(json);
 
-for (let token of parser) {
+for (const token of parser) {
   // use token
 }
 ```
 
-Otherwise you have to get an *iterator* from `parser.tokens()`
+Otherwise you have to get an *iterator* from `parser.tokens()`:
 
 ```javascript
-var parser = new JSONPullParser(json);
-var it     = parser.tokens();
+const parser = new JSONPullParser(json);
+const it = parser.tokens();
 
 while (true) {
-  var step = it.next();
-  if (step.done) break;
-  var token = step.value;
+  const step = it.next();
+  if (step.done) {
+    break;
+  }
+  const token = step.value;
   // use token
 }
 ```
@@ -53,17 +58,17 @@ and `EndArray` at the correct depth.
 
 ## Installation
 
-**Node (CommonJS)**
+### Node (CommonJS)
 
 ```sh
 $ npm install json-pull-parser
 ```
 
-```javascript
-const JSONPullParser = require('json-pull-parser')
+```js
+const JSONPullParser = require('json-pull-parser');
 ```
 
-**Browser**
+### Browser
 
 ```html
 <script src="https://unpkg.com/json-pull-parser/dist/json-pull-parser.js"></script>
@@ -77,43 +82,46 @@ const JSONPullParser = require('json-pull-parser')
 `JSON.parse` could be implemented by simply feeding all the tokens to
 `ObjectBuilder`.
 
-```javascript
-JSON.parse = function (source)
-{
-  let parser = new JSONPullParser(source);
-  let builder = new JSONPullParser.ObjectBuilder();
-  for (let token of parser) builder.handle(token);
+```js
+JSON.parse = function (source) {
+  const parser = new JSONPullParser(source);
+  const builder = new JSONPullParser.ObjectBuilder();
+  for (const token of parser) {
+    builder.handle(token);
+  }
   return builder.value;
-}
+};
 ```
 
 ## Custom handling of events
 
-```javascript
-let parser = new JSONPullParser(json);
+```js
+const parser = new JSONPullParser(json);
 
-for (let token of parser) {
+for (const token of parser) {
   switch (token.type) {
-    case JSONPullParser.StartObject:
-      break;
-    case JSONPullParser.EndObject:
-      break;
-    case JSONPullParser.StartArray:
-      break;
-    case JSONPullParser.EndArray:
-      break;
-    case JSONPullParser.String:
-      break;
-    case JSONPullParser.Number:
-      break;
-    case JSONPullParser.TrueLiteral:
-      break;
-    case JSONPullParser.FalseLiteral:
-      break;
-    case JSONPullParser.NullLiteral:
-      break;
-    case JSONPullParser.Error:
-      break;
+  case JSONPullParser.StartObject:
+    break;
+  case JSONPullParser.EndObject:
+    break;
+  case JSONPullParser.StartArray:
+    break;
+  case JSONPullParser.EndArray:
+    break;
+  case JSONPullParser.String:
+    break;
+  case JSONPullParser.Number:
+    break;
+  case JSONPullParser.TrueLiteral:
+    break;
+  case JSONPullParser.FalseLiteral:
+    break;
+  case JSONPullParser.NullLiteral:
+    break;
+  case JSONPullParser.Error:
+    break;
+  default:
+    throw new Error('Should not get here');
   }
 }
 
