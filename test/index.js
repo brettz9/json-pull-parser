@@ -100,7 +100,7 @@ const factory = function (schema, options) {
           : {valid: false, errors: ['not equal']};
       } catch (err) {
         console.error(err);
-        return {valid: false, errors: ['oops']};
+        return {valid: false, errors: [err.message]};
       }
     }
   };
