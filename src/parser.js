@@ -110,9 +110,7 @@ JSONPullParser.ObjectBuilder = ObjectBuilder;
 JSONPullParser.parse = function (text, reviver) {
   if (typeof text !== 'string') text = String(text);
   const builder = new ObjectBuilder();
-  const it = tokenIterator(text);
-  for (let step = it.next(); !step.done; step = it.next()) {
-    const token = step.value;
+  for (const token of tokenIterator(text)) {
     // console.log("token: " + token.type);
     builder.handle(token);
   }
