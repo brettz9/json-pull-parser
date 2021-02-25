@@ -71,7 +71,7 @@ const JSONPullParser = require('json-pull-parser');
 ### Browser
 
 ```html
-<script src="https://unpkg.com/json-pull-parser/dist/json-pull-parser.js"></script>
+<script src="https://unpkg.com/json-pull-parser/dist/json-pull-parser.cjs"></script>
 ```
 
 ## ObjectBuilder

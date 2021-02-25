@@ -7,7 +7,11 @@
   ],
   "description": "JSON pull parser",
   "license": "MIT",
-  "main": "index.js",
+  "main": "dist/json-pull-parser.cjs",
+  "exports": {
+    "require": "dist/json-pull-parser.cjs",
+    "module": "dist/json-pull-parser.js"
+  },
   "type": "module",
   "scripts": {
     "lint": "eslint --ext=js,cjs,md,html .",
@@ -28,37 +32,36 @@
     "iterator"
   ],
   "files": [
-    "dist/json-pull-parser.js",
-    "dist/json-pull-parser.js.map",
+    "dist/json-pull-parser.cjs",
+    "dist/json-pull-parser.cjs.map",
     "index.js",
     "src/builder.js",
     "src/parser.js"
   ],
   "dependencies": {},
   "devDependencies": {
-    "@mysticatea/eslint-plugin": "^13.0.0",
-    "babel-eslint": "^10.1.0",
-    "eslint": "^7.18.0",
-    "eslint-config-ash-nazg": "^25.1.0",
+    "@babel/eslint-parser": "^7.13.4",
+    "@brettz9/eslint-plugin": "^1.0.3",
+    "eslint": "^7.20.0",
+    "eslint-config-ash-nazg": "^29.8.0",
     "eslint-config-standard": "^16.0.2",
     "eslint-plugin-array-func": "^3.1.7",
     "eslint-plugin-compat": "^3.9.0",
     "eslint-plugin-eslint-comments": "^3.2.0",
     "eslint-plugin-html": "^6.1.1",
     "eslint-plugin-import": "^2.22.1",
-    "eslint-plugin-jsdoc": "^31.3.2",
-    "eslint-plugin-markdown": "^1.0.2",
+    "eslint-plugin-jsdoc": "^32.2.0",
+    "eslint-plugin-markdown": "^2.0.0",
     "eslint-plugin-no-unsanitized": "^3.1.4",
     "eslint-plugin-no-use-extend-native": "^0.5.0",
     "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-promise": "^4.2.1",
-    "eslint-plugin-sonarjs": "^0.5.0",
+    "eslint-plugin-promise": "^4.3.1",
+    "eslint-plugin-radar": "^0.2.1",
     "eslint-plugin-standard": "^4.1.0",
-    "eslint-plugin-unicorn": "^27.0.0",
+    "eslint-plugin-unicorn": "^28.0.2",
     "glob": "^7.1.6",
     "json-schema-test-suite": "^0.0.10",
-    "rollup": "^2.38.0",
-    "rollup-plugin-terser": "^7.0.2",
-    "typescript": "^4.1.3"
+    "rollup": "^2.39.1",
+    "rollup-plugin-terser": "^7.0.2"
   }
 }

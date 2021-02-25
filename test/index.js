@@ -21,20 +21,20 @@ const globRelativePath = (path) => {
 const JSONPullParser = (await import(__dirname + '/../index.js')).default;
 globRelativePath('/**/fail*.json').forEach((file) => {
   console.log(file);
-  const test = fs.readFileSync(file).toString();
+  const tst = fs.readFileSync(file).toString();
   assert.throws(() => {
-    JSONPullParser.parse(test);
+    JSONPullParser.parse(tst);
   });
 });
 
 globRelativePath('/**/pass*.json').forEach((file) => {
   console.log(file);
-  const test = fs.readFileSync(file).toString();
+  const tst = fs.readFileSync(file).toString();
 
-  let o1 = JSONPullParser.parse(test);
+  let o1 = JSONPullParser.parse(tst);
   assert.doesNotThrow(() => {
-    o1 = JSONPullParser.parse(test);
-    const o2 = JSON.parse(test);
+    o1 = JSONPullParser.parse(tst);
+    const o2 = JSON.parse(tst);
 
     assert.deepStrictEqual(o1, o2);
   });
@@ -65,8 +65,8 @@ globRelativePath('/js/**/*.js').forEach((file) => {
   const source = fs.readFileSync(file).toString();
   const script = new vm.Script(source);
 
-  const context = vm.createContext(sandbox);
-  script.runInContext(context);
+  const ctxt = vm.createContext(sandbox);
+  script.runInContext(ctxt);
 });
 
 const factory = function (schema, options) {

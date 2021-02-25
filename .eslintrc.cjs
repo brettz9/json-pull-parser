@@ -2,15 +2,14 @@
 
 module.exports = {
   extends: [
-    'ash-nazg/sauron-node'
+    'ash-nazg/sauron-node-overrides'
   ],
-  parser: 'babel-eslint',
+  parser: '@babel/eslint-parser',
   parserOptions: {
-    ecmaVersion: 2020,
-    sourceType: 'module'
+    requireConfigFile: false,
+    ecmaVersion: 2020
   },
   env: {
-    browser: false,
     es6: true
   },
   settings: {
@@ -20,27 +19,23 @@ module.exports = {
       'Symbol.iterator'
     ]
   },
-  globals: {
-    Atomics: 'readonly',
-    SharedArrayBuffer: 'readonly'
-  },
   overrides: [{
-    files: ['.eslintrc.cjs'],
-    extends: [
-      'ash-nazg/sauron-node',
-      'plugin:node/recommended-script'
-    ],
+    files: '*.cjs',
+    extends: ['ash-nazg/sauron-node-script-overrides'],
     rules: {
-      'import/no-commonjs': 0
+      // Internal use
+      'node/shebang': 'off'
     }
   }, {
     files: 'test/index.js',
-    parser: 'babel-eslint',
+    parser: '@babel/eslint-parser',
     parserOptions: {
+      requireConfigFile: false,
       ecmaVersion: 2020,
       sourceType: 'module'
     },
     rules: {
+      'no-shadow': ['error', {allow: ['assert']}],
       'node/no-unsupported-features/es-syntax': ['error', {
         ignores: ['dynamicImport', 'modules']
       }],
@@ -58,7 +53,7 @@ module.exports = {
       'import/unambiguous': 0
     }
   }, {
-    files: ['*.md'],
+    files: ['*.md/*.js'],
     globals: {
       json: true,
       require: true,
@@ -66,6 +61,7 @@ module.exports = {
     },
     rules: {
       'import/no-commonjs': 0,
+      'import/unambiguous': 0,
       'no-shadow': ['error', {
         allow: ['JSONPullParser']
       }],
@@ -74,8 +70,7 @@ module.exports = {
       }],
       'node/no-missing-require': ['error', {
         allowModules: ['json-pull-parser']
-      }],
-      'import/unambiguous': 0
+      }]
     }
   }],
   rules: {
