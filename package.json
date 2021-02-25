@@ -10,7 +10,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "lint": "eslint --ext=js,md,html .",
+    "lint": "eslint --ext=js,cjs,md,html .",
     "build": "rollup -c",
     "test": "node --experimental-modules ./test/index.js",
     "preversion": "npm run lint && npm test",
