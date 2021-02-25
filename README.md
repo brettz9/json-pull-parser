@@ -2,9 +2,6 @@
 
 ## Introduction
 
-Originally forked from [`JSONPullParser`](https://www.npmjs.com/package/json-pull-parser)
-to expand on the types of iterators and to have available in source control.
-
 A dropin replacement for `JSON.parse` and also provides a pull based api.
 
 ## Usage
