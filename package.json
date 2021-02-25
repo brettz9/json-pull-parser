@@ -7,10 +7,11 @@
   ],
   "description": "JSON pull parser",
   "license": "MIT",
-  "main": "dist/json-pull-parser.cjs",
+  "main": "./dist/json-pull-parser.cjs",
   "exports": {
-    "require": "dist/json-pull-parser.cjs",
-    "module": "dist/json-pull-parser.js"
+    "import": "./dist/json-pull-parser.js",
+    "require": "./dist/json-pull-parser.cjs",
+    "./builder": "./src/builder.js"
   },
   "type": "module",
   "scripts": {
